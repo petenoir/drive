@@ -1,68 +1,77 @@
 const express = require("express");
-const multer = require("multer");
 
 const app = express();
 
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, "uploads/");
-    },
-
-    filename: function(req, file, cb) {
-        cb(null, Date.now() + "-" + file.originalname);
-    }
-});
-
-const upload = multer({
-    storage: storage
-});
-
 app.get("/", (req, res) => {
     res.send(`
-        <html>
-        <head>
-            <title>My Drive</title>
-        </head>
-        <body>
-            <h1>My Drive</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Drive</title>
+</head>
+<body>
 
-            <form
-                action="/upload"
-                method="POST"
-                enctype="multipart/form-data">
+<h1>My Drive</h1>
 
-                <input type="file" name="myfile">
+<input type="file" id="fileInput">
 
-                <button type="submit">
-                    Upload
-                </button>
+<button onclick="uploadFile()">
+    Upload
+</button>
 
-            </form>
+<br><br>
 
-        </body>
-        </html>
+<div id="result"></div>
+
+<script>
+async function uploadFile() {
+
+    const file =
+        document.getElementById("fileInput").files[0];
+
+    if (!file) {
+        alert("Choose a file first");
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append(
+        "upload_preset",
+        "mydrive_upload"
+    );
+
+    const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dzbpeoy3y/auto/upload",
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+    const data = await response.json();
+
+    document.getElementById("result").innerHTML =
+        \`
+        <h3>Upload Successful</h3>
+
+        <a href="\${data.secure_url}" target="_blank">
+            Open File
+        </a>
+
+        <br><br>
+
+        <textarea rows="4" cols="80">\${data.secure_url}</textarea>
+        \`;
+}
+</script>
+
+</body>
+</html>
     `);
 });
 
-app.post(
-    "/upload",
-    upload.single("myfile"),
-    (req, res) => {
-
-        res.send(`
-            <h2>Upload Successful</h2>
-
-            <p>
-                ${req.file.originalname}
-            </p>
-
-            <a href="/">
-                Back
-            </a>
-        `);
-    }
-);
-
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
+app.listen(process.env.PORT || 5000, () => {
+    console.log("Server running");
 });
