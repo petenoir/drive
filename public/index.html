@@ -1,34 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Drive</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>☁ My Drive</h1>
+        <h1>☁ My Drive</h1>
+        <p class="subtitle">
+            Upload files and share them anywhere
+        </p>
 
-    <div class="upload-box">
+        <div class="upload-card">
 
-        <input type="file" id="fileInput">
+            <input
+                type="file"
+                id="fileInput">
 
-        <button onclick="uploadFile()">
-            Upload File
-        </button>
+            <button
+                id="uploadBtn"
+                onclick="uploadFile()">
+
+                Upload File
+
+            </button>
+
+            <div id="status"></div>
+
+        </div>
+
+        <h2>Recent Uploads</h2>
+
+        <div id="fileList">
+
+        </div>
 
     </div>
 
-    <div id="result"></div>
-
-    <h2>Recent Uploads</h2>
-
-    <div id="fileList"></div>
-
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
